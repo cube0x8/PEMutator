@@ -1,0 +1,9 @@
+[package]
+name = "pe-mutator-libafl"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+libafl = { path = "../../../LibAFL/crates/libafl", default-features = true }
+libafl_bolts = { path = "../../../LibAFL/crates/libafl_bolts", default-features = true }
+pe-mutator-core = { path = "../pe-mutator-core" }

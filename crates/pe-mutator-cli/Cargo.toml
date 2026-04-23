@@ -1,0 +1,7 @@
+[package]
+name = "pe-mutator-cli"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+pe-mutator-core = { path = "../pe-mutator-core" }

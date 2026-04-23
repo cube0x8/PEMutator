@@ -1,0 +1,16 @@
+[workspace]
+members = [
+    "crates/pe-mutator-core",
+    "crates/pe-mutator-capi",
+    "crates/pe-mutator-cli",
+]
+exclude = ["crates/pe-mutator-libafl"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+
+[workspace.dependencies]
+iced-x86 = { version = "1.21.0", default-features = false, features = ["std", "decoder", "encoder"] }
+serde = { version = "1", features = ["derive"] }

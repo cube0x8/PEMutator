@@ -1,0 +1,10 @@
+[package]
+name = "pe-mutator-capi"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+crate-type = ["rlib", "cdylib", "staticlib"]
+
+[dependencies]
+pe-mutator-core = { path = "../pe-mutator-core" }

@@ -1,0 +1,8 @@
+[package]
+name = "pe-mutator-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+iced-x86.workspace = true
+serde.workspace = true

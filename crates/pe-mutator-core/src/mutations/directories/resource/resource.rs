@@ -1,16 +1,16 @@
-use crate::core::io::{write_u16_into, write_u32_into};
-use crate::core::rng::MutRng;
+use crate::MutRng;
+use crate::io::{write_u16_into, write_u32_into};
 use crate::mutations::shared::RawMutationResult;
-use crate::pe::data_directories::resource::{
-    ParsedResourceDirectory, ParsedResourceEntry, ResourceEntryTarget,
-};
+use crate::pe::PeInput;
+use crate::pe::data_directories::parse_resource_directory_tree;
 use crate::pe::data_directories::resource::directory::{
     IMAGE_DIRECTORY_ENTRY_RESOURCE, IMAGE_RESOURCE_DIRECTORY_LEN,
 };
 use crate::pe::data_directories::resource::entry::IMAGE_RESOURCE_DIRECTORY_ENTRY_LEN;
-use crate::pe::data_directories::parse_resource_directory_tree;
+use crate::pe::data_directories::resource::{
+    ParsedResourceDirectory, ParsedResourceEntry, ResourceEntryTarget,
+};
 use crate::pe::sections::{PeSection, find_section_containing_rva_mut, section_span};
-use crate::pe::PeInput;
 
 const DIRECTORY_ENTRY_COUNT_WEIGHT: usize = 3;
 const ENTRY_POINTER_WEIGHT: usize = 3;
@@ -53,7 +53,12 @@ pub(super) fn random_mutation<R: MutRng>(input: &mut PeInput, rng: &mut R) -> Ra
     let mut directories = Vec::new();
     let mut entries = Vec::new();
     let mut data_entries = Vec::new();
-    collect_targets(parsed_root, &mut directories, &mut entries, &mut data_entries);
+    collect_targets(
+        parsed_root,
+        &mut directories,
+        &mut entries,
+        &mut data_entries,
+    );
 
     let bucket = rng.below(
         DIRECTORY_ENTRY_COUNT_WEIGHT
@@ -76,7 +81,8 @@ pub(super) fn random_mutation<R: MutRng>(input: &mut PeInput, rng: &mut R) -> Ra
         return RawMutationResult::Skipped;
     }
 
-    input.resource_directory = parse_resource_directory_tree(&input.data_directories, &input.sections);
+    input.resource_directory =
+        parse_resource_directory_tree(&input.data_directories, &input.sections);
     RawMutationResult::Mutated
 }
 
@@ -230,7 +236,11 @@ fn mutate_recursive_loop<R: MutRng>(
     let loop_candidates: Vec<_> = entries
         .iter()
         .copied()
-        .filter(|entry| directories.iter().any(|dir| dir.table_offset < entry.entry_offset))
+        .filter(|entry| {
+            directories
+                .iter()
+                .any(|dir| dir.table_offset < entry.entry_offset)
+        })
         .collect();
     let Some(entry) = pick_random(&loop_candidates, rng) else {
         return false;
@@ -317,7 +327,11 @@ fn pick_special_data_rva<R: MutRng>(sections: &[PeSection], rng: &mut R) -> u32 
     let end = start.saturating_add(section_span(section));
     let max_file_rva = sections
         .iter()
-        .map(|section| section.virtual_address.saturating_add(section.raw_data.len() as u32))
+        .map(|section| {
+            section
+                .virtual_address
+                .saturating_add(section.raw_data.len() as u32)
+        })
         .max()
         .unwrap_or(0);
 
@@ -343,7 +357,12 @@ fn resource_directory_size(input: &PeInput) -> Option<u32> {
     Some(directory.size)
 }
 
-fn write_resource_u16(input: &mut PeInput, resource_root_rva: u32, offset: u32, value: u16) -> bool {
+fn write_resource_u16(
+    input: &mut PeInput,
+    resource_root_rva: u32,
+    offset: u32,
+    value: u16,
+) -> bool {
     let absolute_rva = match resource_root_rva.checked_add(offset) {
         Some(rva) => rva,
         None => return false,
@@ -363,7 +382,12 @@ fn write_resource_u16(input: &mut PeInput, resource_root_rva: u32, offset: u32, 
     true
 }
 
-fn write_resource_u32(input: &mut PeInput, resource_root_rva: u32, offset: u32, value: u32) -> bool {
+fn write_resource_u32(
+    input: &mut PeInput,
+    resource_root_rva: u32,
+    offset: u32,
+    value: u32,
+) -> bool {
     let absolute_rva = match resource_root_rva.checked_add(offset) {
         Some(rva) => rva,
         None => return false,
@@ -395,8 +419,8 @@ fn pick_random<T: Copy, R: MutRng>(items: &[T], rng: &mut R) -> Option<T> {
 mod tests {
     use std::fs;
 
-    use crate::core::SimpleRng;
-    use crate::core::io::{read_u16, read_u32};
+    use crate::SimpleRng;
+    use crate::io::{read_u16, read_u32};
     use crate::pe::sections::slice_at_rva;
 
     use super::*;
@@ -407,6 +431,7 @@ mod tests {
 
     const RESOURCE_FIXTURES: &[&str] = &[
         "geek.exe",
+        "cpuz_x32.exe",
         "procexp.exe",
         "ComIntRep.exe",
         "HDDScan.exe",
@@ -475,13 +500,14 @@ mod tests {
 
     #[test]
     fn mutate_recursive_loop_points_an_entry_to_a_preceding_directory() {
-        let (original, fixture_name, root_rva, directories, entries, _) = load_fixture_matching(
-            |directories, entries, _| {
-                entries
-                    .iter()
-                    .any(|entry| directories.iter().any(|dir| dir.table_offset < entry.entry_offset))
-            },
-        );
+        let (original, fixture_name, root_rva, directories, entries, _) =
+            load_fixture_matching(|directories, entries, _| {
+                entries.iter().any(|entry| {
+                    directories
+                        .iter()
+                        .any(|dir| dir.table_offset < entry.entry_offset)
+                })
+            });
         let before = snapshot_entry_pointers(&original, root_rva, &entries);
 
         let changed = (1_u64..=4096).find_map(|seed| {
@@ -494,17 +520,17 @@ mod tests {
             let after = snapshot_entry_pointers(&candidate, root_rva, &entries);
             let changed_to_preceding_directory =
                 after.iter().enumerate().any(|(index, (_, new_value))| {
-                let (_, old_value) = before[index];
-                if *new_value == old_value || (new_value & 0x8000_0000) == 0 {
-                    return false;
-                }
+                    let (_, old_value) = before[index];
+                    if *new_value == old_value || (new_value & 0x8000_0000) == 0 {
+                        return false;
+                    }
 
-                let target_offset = new_value & 0x7fff_ffff;
-                let entry = entries[index];
-                directories
-                    .iter()
-                    .any(|dir| dir.table_offset == target_offset && dir.table_offset < entry.entry_offset)
-            });
+                    let target_offset = new_value & 0x7fff_ffff;
+                    let entry = entries[index];
+                    directories.iter().any(|dir| {
+                        dir.table_offset == target_offset && dir.table_offset < entry.entry_offset
+                    })
+                });
 
             changed_to_preceding_directory.then_some(())
         });
@@ -541,10 +567,22 @@ mod tests {
             let mut directories = Vec::new();
             let mut entries = Vec::new();
             let mut data_entries = Vec::new();
-            collect_targets(&parsed_root, &mut directories, &mut entries, &mut data_entries);
+            collect_targets(
+                &parsed_root,
+                &mut directories,
+                &mut entries,
+                &mut data_entries,
+            );
 
             if predicate(&directories, &entries, &data_entries) {
-                return (input, fixture_name, root_rva, directories, entries, data_entries);
+                return (
+                    input,
+                    fixture_name,
+                    root_rva,
+                    directories,
+                    entries,
+                    data_entries,
+                );
             }
         }
 

@@ -3,12 +3,12 @@ use crate::assembly::common::{
     ensure_branch_target_in_section, random_branch_target, random_short_branch_target,
     resolve_branch_target_va,
 };
-use crate::core::rng::MutRng;
 use crate::encoder::x86::X86Encoder;
 use crate::error::Error;
 use crate::ir::{
     AbstractBlock, PlacementContext, X86BranchInsn, X86BranchKind, X86BranchWidth, X86MemOp,
 };
+use crate::rng::MutRng;
 
 pub struct X86AssemblyGenerator;
 

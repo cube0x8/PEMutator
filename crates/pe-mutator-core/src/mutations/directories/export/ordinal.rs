@@ -1,5 +1,5 @@
-use crate::core::io::write_u16_into;
-use crate::core::rng::MutRng;
+use crate::MutRng;
+use crate::io::write_u16_into;
 use crate::pe::PeInput;
 use crate::pe::data_directories::export::MAX_MUTATION_EXPORT_ORDINAL_TABLE_ENTRIES;
 use crate::pe::data_directories::read_ordinal_table_entry;

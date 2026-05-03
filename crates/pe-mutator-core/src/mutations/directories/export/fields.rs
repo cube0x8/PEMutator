@@ -1,5 +1,5 @@
-use crate::core::io::write_u32_into;
-use crate::core::rng::MutRng;
+use crate::MutRng;
+use crate::io::write_u32_into;
 use crate::mutations::rva::{
     mutate_controlled_invalid_rva, mutate_havoc_rva, mutate_plausible_rva,
 };
@@ -161,7 +161,7 @@ fn pick_special_u32_value<R: MutRng>(current: u32, related: u32, rng: &mut R) ->
 mod tests {
     use std::fs;
 
-    use crate::core::SimpleRng;
+    use crate::SimpleRng;
     use crate::mutations::shared::RawMutationResult;
     use crate::pe::PeInput;
 

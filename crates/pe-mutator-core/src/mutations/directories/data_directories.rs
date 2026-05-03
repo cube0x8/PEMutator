@@ -1,4 +1,4 @@
-use crate::core::rng::MutRng;
+use crate::MutRng;
 use crate::mutations::helper::{
     huge_directory_size, overflowing_section_size, slightly_oversized_for_section,
 };

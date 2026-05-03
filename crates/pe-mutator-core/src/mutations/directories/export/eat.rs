@@ -1,5 +1,5 @@
-use crate::core::io::write_u32_into;
-use crate::core::rng::MutRng;
+use crate::MutRng;
+use crate::io::write_u32_into;
 use crate::mutations::rva::{
     random_rva_in_section, rva_near_section_end, rva_outside_all_sections,
 };

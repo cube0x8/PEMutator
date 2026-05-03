@@ -1,5 +1,5 @@
-use crate::core::io::{write_u16_into, write_u32_into};
-use crate::core::rng::MutRng;
+use crate::MutRng;
+use crate::io::{write_u16_into, write_u32_into};
 use crate::pe::PeInput;
 use crate::pe::data_directories::{ExportDirectory, PeDataDirectory};
 use crate::pe::data_directories::export::{
@@ -141,8 +141,8 @@ fn align_blob(blob: &mut Vec<u8>, alignment: usize) {
 #[cfg(test)]
 mod tests {
     use super::rebuild_minimal_export_directory;
-    use crate::core::SimpleRng;
-    use crate::core::io::write_u32_into;
+    use crate::SimpleRng;
+    use crate::io::write_u32_into;
     use crate::pe::PeInput;
     use crate::pe::data_directories::ExportDirectory;
     use crate::pe::data_directories::export::{

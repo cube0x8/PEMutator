@@ -1,10 +1,10 @@
 mod resource;
 
-use crate::core::rng::MutRng;
+use crate::MutRng;
 use crate::mutations::mutations::InPlaceMutation;
 use crate::mutations::shared::RawMutationResult;
-use crate::pe::data_directories::parse_resource_directory_tree;
 use crate::pe::PeInput;
+use crate::pe::data_directories::parse_resource_directory_tree;
 
 pub struct ResourceDirectoryMutations;
 

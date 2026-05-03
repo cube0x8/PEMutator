@@ -1,4 +1,4 @@
-use crate::core::io::{read_u16, read_u32};
+use crate::io::{read_u16, read_u32};
 use crate::pe::sections::{PeSection, slice_at_rva};
 
 use super::directory::IMAGE_RESOURCE_DIRECTORY_LEN;

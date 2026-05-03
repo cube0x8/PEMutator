@@ -1,4 +1,4 @@
-use crate::core::io::{read_u16, read_u32};
+use crate::io::{read_u16, read_u32};
 use crate::pe::sections::{PeSection, find_section_containing_rva};
 
 pub(crate) fn read_name_pointer_entry(

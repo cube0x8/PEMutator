@@ -1,4 +1,4 @@
-use crate::core::io::{read_u16, read_u32};
+use crate::io::{read_u16, read_u32};
 use crate::pe::sections::{
     PeSection, find_section_containing_rva, read_c_string_at_rva, slice_at_rva,
 };
@@ -92,8 +92,7 @@ impl ExportDirectory {
         }
 
         if export.address_table_entries > 0 {
-            let max_exports =
-                readable_table_entries(sections, export.export_address_table_rva, 4)?;
+            let max_exports = readable_table_entries(sections, export.export_address_table_rva, 4)?;
             export.address_table_entries = export
                 .address_table_entries
                 .min(max_exports)

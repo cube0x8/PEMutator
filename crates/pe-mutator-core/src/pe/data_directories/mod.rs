@@ -2,7 +2,7 @@ pub mod export;
 mod helpers;
 pub mod resource;
 
-use crate::core::io::{read_u16, read_u32};
+use crate::io::{read_u16, read_u32};
 use crate::pe::pe::OPTIONAL_MAGIC_PE32_PLUS;
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
@@ -69,4 +69,4 @@ pub use export::ExportDirectory;
 pub(crate) use helpers::{
     read_export_address_table_entry, read_name_pointer_entry, read_ordinal_table_entry,
 };
-pub use resource::{ResourceDirectory, ParsedResourceDirectory, parse_resource_directory_tree};
+pub use resource::{ParsedResourceDirectory, ResourceDirectory, parse_resource_directory_tree};

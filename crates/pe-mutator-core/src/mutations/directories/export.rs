@@ -2,7 +2,7 @@ mod eat;
 mod fields;
 mod names;
 mod ordinal;
-use crate::core::rng::MutRng;
+use crate::MutRng;
 use crate::mutations::shared::RawMutationResult;
 use crate::pe::PeInput;
 use crate::pe::data_directories::ExportDirectory;
@@ -67,7 +67,7 @@ fn mutate_table_content<R: MutRng>(input: &mut PeInput, rng: &mut R) -> RawMutat
 #[cfg(test)]
 mod tests {
     use super::ExportDirectoryMutations;
-    use crate::core::SimpleRng;
+    use crate::SimpleRng;
     use crate::mutations::shared::RawMutationResult;
     use crate::pe::PeInput;
 

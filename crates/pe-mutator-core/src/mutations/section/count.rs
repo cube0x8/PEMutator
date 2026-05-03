@@ -1,14 +1,13 @@
-use crate::assembly::AssemblyBackend;
-use crate::core::rng::MutRng;
+use crate::MutRng;
 use crate::error::Error;
-use crate::ir::PlacementContext;
 use crate::mutations::budget::PeSizeBudget;
 use crate::mutations::mutations::BudgetedMutation;
 use crate::mutations::shared::{RawMutationResult, is_executable_section};
 use crate::pe::{
-    DATA_SECTION_NAMES, EXEC_SECTION_NAMES, IMAGE_SCN_MEM_EXECUTE, PeInput, PeSection,
-    PeSizeLimits,
+    DATA_SECTION_NAMES, EXEC_SECTION_NAMES, IMAGE_SCN_MEM_EXECUTE, PeInput, PeSection, PeSizeLimits,
 };
+use asm_mutator_core::assembly::{AssemblyArch, AssemblyBackend};
+use asm_mutator_core::ir::PlacementContext;
 
 pub struct SectionCountMutations;
 
@@ -27,7 +26,15 @@ impl SectionCountMutations {
         budget: &mut PeSizeBudget,
     ) -> Result<RawMutationResult, Error> {
         if input.sections.len() <= 1 || rng.coinflip(0.6) {
-            let backend = input.infer_code_arch().and_then(AssemblyBackend::for_arch);
+            let backend = input.infer_code_arch().and_then(|code_arch| {
+                let assembly_arch = match code_arch {
+                    crate::pe::CodeArch::X86 => AssemblyArch::X86,
+                    crate::pe::CodeArch::X64 => AssemblyArch::X64,
+                    crate::pe::CodeArch::Arm32 => AssemblyArch::Arm32,
+                    crate::pe::CodeArch::Arm64 => AssemblyArch::Arm64,
+                };
+                AssemblyBackend::for_arch(assembly_arch)
+            });
             let characteristics = if rng.coinflip(0.5) {
                 0x6000_0020
             } else {

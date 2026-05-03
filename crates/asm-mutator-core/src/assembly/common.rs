@@ -1,6 +1,6 @@
-use crate::core::rng::MutRng;
 use crate::error::Error;
 use crate::ir::{BranchTarget, PlacementContext};
+use crate::rng::MutRng;
 
 pub fn random_short_branch_target<R: MutRng>(rand: &mut R) -> BranchTarget {
     match rand.below(3) {

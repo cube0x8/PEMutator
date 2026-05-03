@@ -3,14 +3,14 @@ use std::fmt;
 use super::arch::{canonical_optional_header_size, expected_optional_magic, infer_code_arch};
 use super::data_directories::resource::ResourceEntryTarget;
 use super::data_directories::{
-    data_directories_offset, number_of_rva_and_sizes_offset,
-    optional_header_size_for_data_directories, parse_data_directories,
-    parse_resource_directory_tree, ExportDirectory, ParsedResourceDirectory, PeDataDirectory,
+    ExportDirectory, ParsedResourceDirectory, PeDataDirectory, data_directories_offset,
+    number_of_rva_and_sizes_offset, optional_header_size_for_data_directories,
+    parse_data_directories, parse_resource_directory_tree,
 };
-use super::sections::{read_c_string_at_rva, slice_at_rva, PeSection, SectionLayout};
-use super::template::{default_dos_stub, DEFAULT_PE_OFFSET, DOS_MAGIC};
-use crate::core::io::{read_u16, read_u32, write_u16, write_u16_into, write_u32, write_u32_into};
+use super::sections::{PeSection, SectionLayout, read_c_string_at_rva, slice_at_rva};
+use super::template::{DEFAULT_PE_OFFSET, DOS_MAGIC, default_dos_stub};
 use crate::error::Error;
+use crate::io::{read_u16, read_u32, write_u16, write_u16_into, write_u32, write_u32_into};
 use crate::mutations::budget::PeSizeBudget;
 use crate::pe::parse_sections;
 use crate::pe::sections::constants::SECTION_HEADER_LEN;

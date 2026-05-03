@@ -1,4 +1,5 @@
-pub use pe_mutator_core::{arch, assembly, core, encoder, error, ir, pe, utils};
+pub use asm_mutator_core::{arch, assembly, encoder, ir};
+pub use pe_mutator_core::{error, io, pe, rng, utils};
 pub mod mutator;
 pub mod pe_mutator;
 pub mod rng_wrapper;
@@ -19,7 +20,7 @@ mod tests {
         ExportDirectoryMutator, OverlayMutator, ResourceDirectoryMutator, SectionBodyMutator,
         SectionCountMutator, SectionHeaderMutator, DEFAULT_OVERLAY_MAX_LEN,
     };
-    use pe_mutator_core::core::{PeMutationCategorySet, PeMutationKind};
+    use pe_mutator_core::{PeMutationCategorySet, PeMutationKind};
 
     #[test]
     fn root_exports_cover_every_libafl_mutator_wrapper() {

@@ -1,6 +1,6 @@
-use pe_mutator_core::arch::{Reg32, Reg64, SafeReg64, SensitiveReg64, X86_64Insn, X86Insn};
-use pe_mutator_core::encoder::{x64::X64Encoder, x86::X86Encoder};
-use pe_mutator_core::ir::{X64MemOp, X86MemOp};
+use asm_mutator_core::arch::{Reg32, Reg64, SafeReg64, SensitiveReg64, X86_64Insn, X86Insn};
+use asm_mutator_core::encoder::{x64::X64Encoder, x86::X86Encoder};
+use asm_mutator_core::ir::{X64MemOp, X86MemOp};
 
 #[test]
 fn x64_encodes_rip_relative_zero_disp() {

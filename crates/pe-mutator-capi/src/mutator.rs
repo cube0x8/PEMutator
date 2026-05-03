@@ -1,9 +1,9 @@
-use pe_mutator_core::core::{
+use pe_mutator_core::error::Error;
+use pe_mutator_core::pe::PeInput;
+use pe_mutator_core::{
     PeMutationCategory, PeMutationCategorySet, PeMutationKind, PeMutationReport, PeMutationSet,
     PeMutator as CorePeMutator, PeMutatorConfig, SimpleRng,
 };
-use pe_mutator_core::error::Error;
-use pe_mutator_core::pe::PeInput;
 
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -73,8 +73,8 @@ impl Default for PeMutateCfg {
         let config = PeMutatorConfig::default();
         Self {
             seed: 0,
-            min_stack_depth: config.min_stack_depth,
-            max_stack_depth: config.max_stack_depth,
+            min_stack_depth: config.stack.min_stack_depth,
+            max_stack_depth: config.stack.max_stack_depth,
             overlay_max_len: config.overlay_max_len,
             enabled_categories: config.enabled_categories.bits(),
             enabled_mutations: config.enabled_mutations.bits(),
@@ -85,8 +85,10 @@ impl Default for PeMutateCfg {
 impl From<PeMutateCfg> for PeMutatorConfig {
     fn from(value: PeMutateCfg) -> Self {
         Self {
-            min_stack_depth: value.min_stack_depth,
-            max_stack_depth: value.max_stack_depth,
+            stack: pe_mutator_core::StackDepthConfig {
+                min_stack_depth: value.min_stack_depth,
+                max_stack_depth: value.max_stack_depth,
+            },
             overlay_max_len: value.overlay_max_len,
             enabled_categories: PeMutationCategorySet::from_bits(value.enabled_categories),
             enabled_mutations: PeMutationSet::from_bits(value.enabled_mutations),
@@ -126,9 +128,7 @@ impl PEMutator {
 #[cfg(test)]
 mod tests {
     use super::{PeMutateCategoryBits, PeMutateCfg, PeMutateMutationBits};
-    use pe_mutator_core::core::{
-        PeMutationCategorySet, PeMutationKind, PeMutationSet, PeMutatorConfig,
-    };
+    use pe_mutator_core::{PeMutationCategorySet, PeMutationKind, PeMutationSet, PeMutatorConfig};
 
     #[test]
     fn capi_category_bits_match_core_category_set() {

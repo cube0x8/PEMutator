@@ -12,13 +12,11 @@ pub mod shared;
 pub use assembly::{
     EntryPointMutations, ExecutableChunkAssemblyMutations, plan_executable_chunk_assembly_mutation,
 };
+pub use budget::PeSizeBudget;
 pub use directories::{
     DataDirectoryEntryMutations, ExportDirectoryMutations, ResourceDirectoryMutations,
 };
 pub use overlay::OverlayMutations;
 pub use pe_header::ArchitectureMutations;
-pub use section::{
-    SectionBodyMutations, SectionCountMutations, SectionHeaderMutations,
-};
-pub use budget::PeSizeBudget;
+pub use section::{SectionBodyMutations, SectionCountMutations, SectionHeaderMutations};
 pub use shared::{ExecutableChunkMutationPlan, RawMutationResult};

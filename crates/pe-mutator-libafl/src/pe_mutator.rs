@@ -15,12 +15,10 @@ use libafl_bolts::{
     Named,
 };
 use pe_mutator_core::{
-    core::{
-        PeMutationCategory, PeMutationCategorySet, PeMutationReport, PeMutator as CorePeMutator,
-        PeMutatorConfig,
-    },
     error::{Error as CoreError, ErrorKind as CoreErrorKind},
     pe::{PeInput, PeSerializationConfig, PeSizeLimits},
+    PeMutationCategory, PeMutationCategorySet, PeMutationReport, PeMutator as CorePeMutator,
+    PeMutatorConfig,
 };
 
 use crate::mutator::{

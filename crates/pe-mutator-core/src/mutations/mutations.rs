@@ -1,4 +1,4 @@
-use crate::core::rng::MutRng;
+use crate::MutRng;
 use crate::error::Error;
 use crate::mutations::budget::PeSizeBudget;
 use crate::mutations::shared::RawMutationResult;

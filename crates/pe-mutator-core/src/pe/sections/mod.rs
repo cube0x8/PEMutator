@@ -1,7 +1,7 @@
 pub mod constants;
 pub mod helpers;
-use crate::core::io::{read_u16, read_u32};
 use crate::error::Error;
+use crate::io::{read_u16, read_u32};
 use crate::pe::sections::constants::SECTION_HEADER_LEN;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]

@@ -57,6 +57,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "993a810118f8f37e9c4411c86f1c4c940a09a7ab34b7bf2d88d06f50c553fab7"
 
 [[package]]
+name = "asm-mutator-core"
+version = "0.1.0"
+dependencies = [
+ "iced-x86",
+ "mutator-bolts",
+ "serde",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -649,6 +658,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "mutator-bolts"
+version = "0.1.0"
+
+[[package]]
 name = "nix"
 version = "0.31.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -753,7 +766,9 @@ dependencies = [
 name = "pe-mutator-core"
 version = "0.1.0"
 dependencies = [
+ "asm-mutator-core",
  "iced-x86",
+ "mutator-bolts",
  "serde",
 ]
 
@@ -761,6 +776,7 @@ dependencies = [
 name = "pe-mutator-libafl"
 version = "0.1.0"
 dependencies = [
+ "asm-mutator-core",
  "libafl",
  "libafl_bolts",
  "pe-mutator-core",

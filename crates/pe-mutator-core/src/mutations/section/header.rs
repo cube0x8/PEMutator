@@ -1,4 +1,4 @@
-use crate::core::rng::MutRng;
+use crate::MutRng;
 use crate::mutations::mutations::InPlaceMutation;
 use crate::mutations::shared::RawMutationResult;
 use crate::pe::{

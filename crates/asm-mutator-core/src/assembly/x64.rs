@@ -3,12 +3,12 @@ use crate::assembly::common::{
     ensure_branch_target_in_section, random_branch_target, random_short_branch_target,
     resolve_branch_target_va,
 };
-use crate::core::rng::MutRng;
 use crate::encoder::x64::X64Encoder;
 use crate::error::Error;
 use crate::ir::{
     AbstractBlock, PlacementContext, X64BranchInsn, X64BranchKind, X64BranchWidth, X64MemOp,
 };
+use crate::rng::MutRng;
 
 pub struct X64AssemblyGenerator;
 

@@ -1,4 +1,4 @@
-use crate::core::io::write_u32_into;
+use crate::io::write_u32_into;
 
 pub const DOS_MAGIC: [u8; 2] = *b"MZ";
 pub const DEFAULT_PE_OFFSET: usize = 0x80;

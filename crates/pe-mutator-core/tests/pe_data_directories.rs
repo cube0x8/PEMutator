@@ -2,9 +2,9 @@ use std::fs;
 
 mod common;
 
-use pe_mutator_core::core::{RawMutationResult, SimpleRng};
 use pe_mutator_core::mutations::ExportDirectoryMutations;
 use pe_mutator_core::pe::{PeDataDirectory, PeInput};
+use pe_mutator_core::{RawMutationResult, SimpleRng};
 
 #[test]
 fn pecompact_psexec_matches_all_optional_header_data_directories() {

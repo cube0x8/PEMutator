@@ -1,7 +1,6 @@
-use crate::assembly::AssemblyBackend;
-use crate::assembly::AssemblyBlock;
-use crate::ir::PlacementContext;
 use crate::pe::PeSection;
+use asm_mutator_core::assembly::{AssemblyBackend, AssemblyBlock};
+use asm_mutator_core::ir::PlacementContext;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RawMutationResult {

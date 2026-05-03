@@ -7,5 +7,6 @@ pub use data::ResourceDataEntry;
 pub use directory::ResourceDirectory;
 pub use entry::{ResourceDirectoryEntry, ResourceDirectoryString};
 pub use tree::{
-    ParsedResourceDirectory, ParsedResourceEntry, ResourceEntryName, ResourceEntryTarget, parse_resource_directory_tree
+    ParsedResourceDirectory, ParsedResourceEntry, ResourceEntryName, ResourceEntryTarget,
+    parse_resource_directory_tree,
 };

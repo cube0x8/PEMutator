@@ -3,6 +3,15 @@
 version = 4
 
 [[package]]
+name = "asm-mutator-core"
+version = "0.1.0"
+dependencies = [
+ "iced-x86",
+ "mutator-bolts",
+ "serde",
+]
+
+[[package]]
 name = "iced-x86"
 version = "1.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -16,6 +25,10 @@ name = "lazy_static"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
+
+[[package]]
+name = "mutator-bolts"
+version = "0.1.0"
 
 [[package]]
 name = "pe-mutator-capi"
@@ -35,7 +48,9 @@ dependencies = [
 name = "pe-mutator-core"
 version = "0.1.0"
 dependencies = [
+ "asm-mutator-core",
  "iced-x86",
+ "mutator-bolts",
  "serde",
 ]
 

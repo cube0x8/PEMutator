@@ -1,14 +1,13 @@
 use crate::{
-    core::{
-        ArchitectureMutations, DataDirectoryEntryMutations, EntryPointMutations,
-        ExecutableChunkAssemblyMutations, OverlayMutations, RawMutationResult,
-        ResourceDirectoryMutations, SectionBodyMutations, SectionCountMutations,
-        SectionHeaderMutations, rng::MutRng,
-    },
+    ArchitectureMutations, DataDirectoryEntryMutations, EntryPointMutations,
+    ExecutableChunkAssemblyMutations, MutRng, OverlayMutations, RawMutationResult,
+    ResourceDirectoryMutations, SectionBodyMutations, SectionCountMutations,
+    SectionHeaderMutations,
     error::{Error, ErrorKind},
     mutations::ExportDirectoryMutations,
     pe::PeInput,
 };
+use mutator_bolts::{MutationRegistry, MutationReport, StackDepthConfig};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
@@ -102,9 +101,7 @@ impl PeMutationKind {
         match self {
             Self::Architecture => PeMutationCategory::Architecture,
             Self::SectionHeader => PeMutationCategory::Headers,
-            Self::SectionCount | Self::SectionBody => {
-                PeMutationCategory::Sections
-            }
+            Self::SectionCount | Self::SectionBody => PeMutationCategory::Sections,
             Self::EntryPoint | Self::ExecutableChunkAssembly => PeMutationCategory::Assembly,
             Self::Overlay => PeMutationCategory::Overlay,
             Self::DataDirectoryEntry | Self::ExportDirectory | Self::ResourceDirectory => {
@@ -123,7 +120,7 @@ impl PeMutationKind {
             Self::Architecture => ArchitectureMutations::random_mutation(input, rng),
             Self::SectionCount => SectionCountMutations::random_mutation(input, rng),
             Self::SectionHeader => Ok(SectionHeaderMutations::random_mutation(input, rng)),
-            Self::SectionBody => Ok(SectionBodyMutations::random_mutation(input, rng)),
+            Self::SectionBody => Ok(SectionBodyMutations::default().random_mutation(input, rng)),
             Self::EntryPoint => EntryPointMutations::random_mutation(input, rng),
             Self::ExecutableChunkAssembly => {
                 ExecutableChunkAssemblyMutations::random_mutation(input, rng)
@@ -267,8 +264,7 @@ impl Default for PeMutationCategorySet {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PeMutatorConfig {
-    pub min_stack_depth: usize,
-    pub max_stack_depth: usize,
+    pub stack: StackDepthConfig,
     pub overlay_max_len: usize,
     pub enabled_categories: PeMutationCategorySet,
     pub enabled_mutations: PeMutationSet,
@@ -276,14 +272,11 @@ pub struct PeMutatorConfig {
 
 impl PeMutatorConfig {
     pub fn normalized_stack_depth_bounds(&self) -> (usize, usize) {
-        let min = self.min_stack_depth.max(1);
-        let max = self.max_stack_depth.max(min);
-        (min, max)
+        self.stack.normalized_stack_depth_bounds()
     }
 
     pub fn stack_depth<R: MutRng>(&self, rng: &mut R) -> usize {
-        let (min, max) = self.normalized_stack_depth_bounds();
-        min + rng.below(max - min + 1)
+        self.stack.stack_depth(rng)
     }
 
     pub fn is_mutation_enabled(&self, kind: PeMutationKind) -> bool {
@@ -298,8 +291,7 @@ impl PeMutatorConfig {
 impl Default for PeMutatorConfig {
     fn default() -> Self {
         Self {
-            min_stack_depth: 1,
-            max_stack_depth: 8,
+            stack: StackDepthConfig::default(),
             overlay_max_len: 0x1000,
             enabled_categories: PeMutationCategorySet::DEFAULT,
             enabled_mutations: PeMutationSet::DEFAULT,
@@ -307,34 +299,16 @@ impl Default for PeMutatorConfig {
     }
 }
 
-pub trait PeMutationRegistry {
-    fn mutations(&self) -> &[PeMutationKind];
-}
+pub type PeMutationReport = MutationReport<PeMutationKind>;
+pub trait PeMutationRegistry: MutationRegistry<PeMutationKind> {}
+impl<T> PeMutationRegistry for T where T: MutationRegistry<PeMutationKind> {}
 
 #[derive(Debug, Clone, Copy, Default)]
 pub struct DefaultPeMutationRegistry;
 
-impl PeMutationRegistry for DefaultPeMutationRegistry {
+impl MutationRegistry<PeMutationKind> for DefaultPeMutationRegistry {
     fn mutations(&self) -> &[PeMutationKind] {
         &PeMutationKind::ALL
-    }
-}
-
-#[derive(Debug, Clone, Default)]
-pub struct PeMutationReport {
-    pub requested_stack_depth: usize,
-    pub selected_mutations: Vec<PeMutationKind>,
-    pub mutated_count: usize,
-    pub skipped_count: usize,
-}
-
-impl PeMutationReport {
-    pub fn attempted_count(&self) -> usize {
-        self.selected_mutations.len()
-    }
-
-    pub fn any_mutated(&self) -> bool {
-        self.mutated_count != 0
     }
 }
 

@@ -2,10 +2,7 @@ use std::fs;
 
 mod common;
 
-use pe_mutator_core::{
-    core::{EntryPointMutations, RawMutationResult, SimpleRng},
-    pe::PeInput,
-};
+use pe_mutator_core::{EntryPointMutations, RawMutationResult, SimpleRng, pe::PeInput};
 
 #[test]
 fn entry_point_mutator_rewrites_entrypoint_on_real_x86_pe() {

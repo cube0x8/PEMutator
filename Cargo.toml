@@ -1,5 +1,7 @@
 [workspace]
 members = [
+    "crates/asm-mutator-core",
+    "crates/mutator-bolts",
     "crates/pe-mutator-core",
     "crates/pe-mutator-capi",
     "crates/pe-mutator-cli",

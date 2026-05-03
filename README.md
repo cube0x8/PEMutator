@@ -128,15 +128,12 @@ A minimal `Cargo.toml` setup looks like this:
 [dependencies]
 libafl = { path = "../LibAFL/crates/libafl" }
 libafl_bolts = { path = "../LibAFL/crates/libafl_bolts" }
-libafl_pe_mutator = { path = "../libafl-pe-mutator/crates/pe-mutator-libafl", package = "pe-mutator-libafl" }
+libafl_pe_mutator = { path = "../PEMutator/crates/pe-mutator-libafl", package = "pe-mutator-libafl" }
 ```
-
-In `../libafl_bdclient_fuzzer`, the dependency is wired in exactly this style, with `pe-mutator-libafl` consumed as `libafl_pe_mutator`.
 
 At a high level, the integration looks like this:
 
 ```rust
-use libafl::mutators::{havoc_mutations, StdMOptMutator};
 use libafl_pe_mutator::{
     core::{PeMutatorConfig, PeMutationCategory, PeMutationCategorySet, PeMutationKind, PeMutationSet},
     PeMutator, PeMutatorOptions,

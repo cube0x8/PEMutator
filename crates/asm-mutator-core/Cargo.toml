@@ -1,10 +1,9 @@
 [package]
-name = "pe-mutator-core"
+name = "asm-mutator-core"
 version.workspace = true
 edition.workspace = true
 
 [dependencies]
-asm-mutator-core = { path = "../asm-mutator-core" }
 iced-x86.workspace = true
 mutator_bolts = { package = "mutator-bolts", path = "../mutator-bolts" }
 serde.workspace = true

@@ -1,4 +1,4 @@
-use crate::core::rng::MutRng;
+use crate::MutRng;
 use crate::pe::{PeSection, section_span};
 
 pub fn slightly_oversized_for_section<R: MutRng>(

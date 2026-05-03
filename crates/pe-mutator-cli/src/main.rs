@@ -4,11 +4,9 @@ use std::{
 };
 
 use pe_mutator_core::{
-    core::{
-        PeMutationCategory, PeMutationCategorySet, PeMutationSet, PeMutator, PeMutatorConfig,
-        SimpleRng, DEFAULT_SEED,
-    },
-    pe::{self, machine_family, PeInput},
+    DEFAULT_SEED, PeMutationCategory, PeMutationCategorySet, PeMutationSet, PeMutator,
+    PeMutatorConfig, SimpleRng,
+    pe::{self, PeInput, machine_family},
 };
 
 fn parse_pe(path: &str) -> Result<(), String> {
@@ -199,7 +197,7 @@ fn render_mutation_report(
     output_len: usize,
     seed: u64,
     config: &PeMutatorConfig,
-    report: &pe_mutator_core::core::PeMutationReport,
+    report: &pe_mutator_core::PeMutationReport,
 ) -> String {
     let size_delta = output_len as i128 - input_len as i128;
     let mutation_names = if report.selected_mutations.is_empty() {
@@ -239,8 +237,8 @@ fn render_mutation_report(
         input_len = input_len,
         output_len = output_len,
         size_delta = size_delta,
-        min_stack_depth = config.min_stack_depth,
-        max_stack_depth = config.max_stack_depth,
+        min_stack_depth = config.stack.min_stack_depth,
+        max_stack_depth = config.stack.max_stack_depth,
         requested_stack_depth = report.requested_stack_depth,
         attempted_mutations = report.attempted_count(),
         mutated_count = report.mutated_count,
@@ -254,14 +252,14 @@ fn render_mutation_report(
 fn build_mutator_config(args: &MutateArgs) -> PeMutatorConfig {
     let mut config = PeMutatorConfig::default();
     if let Some(depth) = args.stack_depth {
-        config.min_stack_depth = depth;
-        config.max_stack_depth = depth;
+        config.stack.min_stack_depth = depth;
+        config.stack.max_stack_depth = depth;
     }
     if let Some(min_depth) = args.min_stack_depth {
-        config.min_stack_depth = min_depth;
+        config.stack.min_stack_depth = min_depth;
     }
     if let Some(max_depth) = args.max_stack_depth {
-        config.max_stack_depth = max_depth;
+        config.stack.max_stack_depth = max_depth;
     }
     if let Some(overlay_max_len) = args.overlay_max_len {
         config.overlay_max_len = overlay_max_len;
@@ -279,8 +277,8 @@ fn build_mutator_config(args: &MutateArgs) -> PeMutatorConfig {
         config.enabled_categories.remove(category);
     }
     let (min_depth, max_depth) = config.normalized_stack_depth_bounds();
-    config.min_stack_depth = min_depth;
-    config.max_stack_depth = max_depth;
+    config.stack.min_stack_depth = min_depth;
+    config.stack.max_stack_depth = max_depth;
     config
 }
 
@@ -319,8 +317,8 @@ fn mutate_pe(args: &[String]) -> Result<(), String> {
         "mutated {} -> {} (seed=0x{seed:016x}, stack_depth={}..{}, attempted={}, mutated={}, skipped={})",
         input_path,
         output_path,
-        config.min_stack_depth,
-        config.max_stack_depth,
+        config.stack.min_stack_depth,
+        config.stack.max_stack_depth,
         report.attempted_count(),
         report.mutated_count,
         report.skipped_count,
@@ -380,8 +378,8 @@ fn main() -> Result<(), String> {
 
 #[cfg(test)]
 mod tests {
-    use super::{build_mutator_config, MutateArgs};
-    use pe_mutator_core::core::{PeMutationCategory, PeMutationKind, PeMutationSet};
+    use super::{MutateArgs, build_mutator_config};
+    use pe_mutator_core::{PeMutationCategory, PeMutationKind, PeMutationSet};
 
     fn args_with_categories(enable_categories: Vec<PeMutationCategory>) -> MutateArgs {
         MutateArgs {

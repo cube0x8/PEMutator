@@ -12,6 +12,18 @@ pub enum X86BranchWidth {
 pub enum X86BranchKind {
     Jmp,
     Call,
+    Jnz,
+    Jz,
+    Jb,
+    Jle,
+    Jg,
+    Jns,
+    Ja,
+    Js,
+    Jae,
+    Jl,
+    Jge,
+    Jnp,
 }
 
 #[derive(Debug, Clone, Copy)]

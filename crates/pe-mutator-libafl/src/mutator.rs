@@ -9,16 +9,14 @@ use libafl::{
 };
 use libafl_bolts::{rands::Rand, Named};
 use pe_mutator_core::{
-    core::{
-        plan_executable_chunk_assembly_mutation as core_plan_executable, ArchitectureMutations,
-        DataDirectoryEntryMutations, EntryPointMutations, ExecutableChunkAssemblyMutations,
-        ExecutableChunkMutationPlan, OverlayMutations, RawMutationResult,
-        ResourceDirectoryMutations, SectionBodyMutations, SectionCountMutations,
-        SectionHeaderMutations,
-    },
     error::{Error as CoreError, ErrorKind as CoreErrorKind},
     mutations::{ExportDirectoryMutations, PeSizeBudget},
     pe::{PeInput, PeSizeLimits},
+    plan_executable_chunk_assembly_mutation as core_plan_executable, ArchitectureMutations,
+    DataDirectoryEntryMutations, EntryPointMutations, ExecutableChunkAssemblyMutations,
+    ExecutableChunkMutationPlan, OverlayMutations, RawMutationResult,
+    ResourceDirectoryMutations, SectionBodyMutations, SectionCountMutations,
+    SectionHeaderMutations,
 };
 
 use crate::rng_wrapper::LibAFLRng;
@@ -200,18 +198,35 @@ impl Named for SectionHeaderMutator {
 
 pub struct SectionBodyMutator {
     max_materialized_size: Option<usize>,
+    section_index: Option<usize>,
 }
 
 impl SectionBodyMutator {
     pub fn new() -> Self {
         Self {
             max_materialized_size: None,
+            section_index: None,
         }
     }
 
     pub fn with_max_materialized_size(max_materialized_size: Option<usize>) -> Self {
         Self {
             max_materialized_size,
+            section_index: None,
+        }
+    }
+
+    pub fn with_section_index(section_index: Option<usize>) -> Self {
+        Self {
+            max_materialized_size: None,
+            section_index,
+        }
+    }
+
+    pub fn with_options(max_materialized_size: Option<usize>, section_index: Option<usize>) -> Self {
+        Self {
+            max_materialized_size,
+            section_index,
         }
     }
 }
@@ -233,7 +248,8 @@ where
             Err(err) => return recover_mutation_error(err),
         };
         Ok(raw_to_libafl(
-            SectionBodyMutations::random_mutation_with_budget(input, &mut rng, &mut budget),
+            SectionBodyMutations::new(self.section_index)
+                .random_mutation_with_budget(input, &mut rng, &mut budget),
         ))
     }
 

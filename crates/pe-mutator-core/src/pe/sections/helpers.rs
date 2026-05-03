@@ -1,5 +1,5 @@
-use crate::core::{io::read_c_string_lossy, rng::MutRng};
 use crate::pe::sections::PeSection;
+use crate::{MutRng, io::read_c_string_lossy};
 
 pub fn find_section_containing_rva(sections: &[PeSection], rva: u32) -> Option<&PeSection> {
     sections.iter().find(|section| {

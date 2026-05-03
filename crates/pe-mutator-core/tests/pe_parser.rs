@@ -1,6 +1,6 @@
-use pe_mutator_core::core::io::{read_u32, write_u16_into, write_u32_into};
+use pe_mutator_core::io::{read_u32, write_u16_into, write_u32_into};
 use pe_mutator_core::pe::{
-    PeInput, PeSection, IMAGE_FILE_MACHINE_AMD64, IMAGE_FILE_MACHINE_I386, OPTIONAL_MAGIC_PE32_PLUS,
+    IMAGE_FILE_MACHINE_AMD64, IMAGE_FILE_MACHINE_I386, OPTIONAL_MAGIC_PE32_PLUS, PeInput, PeSection,
 };
 
 const IMAGE_DIRECTORY_ENTRY_EXPORT: usize = 0;

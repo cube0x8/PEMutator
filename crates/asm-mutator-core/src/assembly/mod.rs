@@ -3,13 +3,20 @@ pub mod x64;
 pub mod x86;
 
 use crate::arch::{X86_64Insn, X86Insn};
-use crate::core::rng::MutRng;
 use crate::encoder::{x64::X64Encoder, x86::X86Encoder};
 use crate::error::Error;
 use crate::ir::{AbstractBlock, PlacementContext};
-use crate::pe::CodeArch;
+use crate::rng::MutRng;
 
 use self::{x64::X64AssemblyGenerator, x86::X86AssemblyGenerator};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AssemblyArch {
+    X86,
+    X64,
+    Arm32,
+    Arm64,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AssemblyBackend {
@@ -24,11 +31,11 @@ pub enum AssemblyBlock {
 }
 
 impl AssemblyBackend {
-    pub fn for_arch(arch: CodeArch) -> Option<Self> {
+    pub fn for_arch(arch: AssemblyArch) -> Option<Self> {
         match arch {
-            CodeArch::X86 => Some(Self::X86),
-            CodeArch::X64 => Some(Self::X64),
-            CodeArch::Arm32 | CodeArch::Arm64 => None,
+            AssemblyArch::X86 => Some(Self::X86),
+            AssemblyArch::X64 => Some(Self::X64),
+            AssemblyArch::Arm32 | AssemblyArch::Arm64 => None,
         }
     }
 

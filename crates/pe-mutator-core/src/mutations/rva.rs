@@ -1,4 +1,4 @@
-use crate::core::rng::MutRng;
+use crate::MutRng;
 use crate::pe::{
     COMMON_SECTION_NAMES, PeSection, SPECIAL_SECTION_NAMES, find_section_containing_rva,
     pick_random_section, section_span,

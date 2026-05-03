@@ -1,7 +1,7 @@
+use crate::pe::data_directories::PeDataDirectory;
 use crate::pe::data_directories::resource::{
     ResourceDataEntry, ResourceDirectory, ResourceDirectoryEntry, ResourceDirectoryString,
 };
-use crate::pe::data_directories::PeDataDirectory;
 use crate::pe::sections::{PeSection, slice_at_rva};
 
 use super::directory::{IMAGE_DIRECTORY_ENTRY_RESOURCE, IMAGE_RESOURCE_DIRECTORY_LEN};

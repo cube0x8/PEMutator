@@ -1,5 +1,5 @@
-use crate::core::io::write_u32_into;
-use crate::core::rng::MutRng;
+use crate::MutRng;
+use crate::io::write_u32_into;
 use crate::pe::PeInput;
 use crate::pe::data_directories::export::MAX_MUTATION_EXPORT_NAME_POINTERS;
 use crate::pe::data_directories::read_name_pointer_entry;
@@ -305,8 +305,8 @@ fn patch_string_terminator(input: &mut PeInput, rva: u32, replacement: u8) -> bo
 mod tests {
     use std::fs;
 
-    use crate::core::SimpleRng;
-    use crate::core::io::read_c_string_bytes;
+    use crate::SimpleRng;
+    use crate::io::read_c_string_bytes;
     use crate::mutations::directories::export::names::{
         disorder_name_pointer_sort, duplicate_name_pointer, point_name_to_empty_string,
         point_name_to_globally_out_of_order_string, point_name_to_non_ascii_or_unterminated_bytes,

@@ -1,4 +1,4 @@
-use crate::core::io::{read_u16, read_u32};
+use crate::io::{read_u16, read_u32};
 use crate::pe::sections::{PeSection, slice_at_rva};
 
 pub(crate) const IMAGE_DIRECTORY_ENTRY_RESOURCE: usize = 2;

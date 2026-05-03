@@ -1,12 +1,12 @@
-use crate::assembly::AssemblyBackend;
-use crate::core::rng::MutRng;
+use crate::MutRng;
 use crate::error::Error;
-use crate::ir::PlacementContext;
 use crate::mutations::budget::PeSizeBudget;
 use crate::mutations::mutations::BudgetedMutation;
 use crate::mutations::shared::RawMutationResult;
 use crate::pe::PeInput;
 use crate::pe::PeSizeLimits;
+use asm_mutator_core::assembly::{AssemblyArch, AssemblyBackend};
+use asm_mutator_core::ir::PlacementContext;
 
 pub struct EntryPointMutations;
 
@@ -31,7 +31,13 @@ impl EntryPointMutations {
         let Some(code_arch) = input.infer_code_arch() else {
             return Ok(RawMutationResult::Skipped);
         };
-        let Some(backend) = AssemblyBackend::for_arch(code_arch) else {
+        let assembly_arch = match code_arch {
+            crate::pe::CodeArch::X86 => AssemblyArch::X86,
+            crate::pe::CodeArch::X64 => AssemblyArch::X64,
+            crate::pe::CodeArch::Arm32 => AssemblyArch::Arm32,
+            crate::pe::CodeArch::Arm64 => AssemblyArch::Arm64,
+        };
+        let Some(backend) = AssemblyBackend::for_arch(assembly_arch) else {
             return Ok(RawMutationResult::Skipped);
         };
 

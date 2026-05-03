@@ -1,22 +1,30 @@
-use crate::core::rng::MutRng;
+use crate::MutRng;
 use crate::error::Error;
 use crate::mutations::budget::PeSizeBudget;
 use crate::mutations::mutations::BudgetedMutation;
 use crate::mutations::shared::RawMutationResult;
 use crate::pe::{PeInput, PeSizeLimits};
 
-pub struct SectionBodyMutations;
+#[derive(Debug, Clone, Copy, Default)]
+pub struct SectionBodyMutations {
+    section_index: Option<usize>,
+}
 
 impl SectionBodyMutations {
-    pub fn random_mutation<R: MutRng>(input: &mut PeInput, rng: &mut R) -> RawMutationResult {
+    pub fn new(section_index: Option<usize>) -> Self {
+        Self { section_index }
+    }
+
+    pub fn random_mutation<R: MutRng>(&self, input: &mut PeInput, rng: &mut R) -> RawMutationResult {
         let mut budget = match PeSizeBudget::from_input(input, PeSizeLimits::default()) {
             Ok(budget) => budget,
             Err(_) => return RawMutationResult::Skipped,
         };
-        Self::random_mutation_with_budget(input, rng, &mut budget)
+        self.random_mutation_with_budget(input, rng, &mut budget)
     }
 
     pub fn random_mutation_with_budget<R: MutRng>(
+        &self,
         input: &mut PeInput,
         rng: &mut R,
         budget: &mut PeSizeBudget,
@@ -25,8 +33,11 @@ impl SectionBodyMutations {
             return RawMutationResult::Skipped;
         }
 
-        let index = rng.below(input.sections.len());
-        let section = &mut input.sections[index];
+        let section_index = self.section_index.unwrap_or_else(|| rng.below(input.sections.len()));
+        if section_index >= input.sections.len() {
+            return RawMutationResult::Skipped;
+        }
+        let section = &mut input.sections[section_index];
 
         match rng.below(3) {
             // Flip a single random bit in the existing section bytes.
@@ -81,6 +92,6 @@ impl BudgetedMutation for SectionBodyMutations {
         rng: &mut R,
         budget: &mut PeSizeBudget,
     ) -> Result<RawMutationResult, Error> {
-        Ok(Self::random_mutation_with_budget(input, rng, budget))
+        Ok(Self::default().random_mutation_with_budget(input, rng, budget))
     }
 }

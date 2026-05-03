@@ -2,14 +2,12 @@ use std::fs;
 
 mod common;
 
+use asm_mutator_core::assembly::{AssemblyBackend, AssemblyBlock};
 use iced_x86::{Decoder, DecoderOptions};
 use pe_mutator_core::{
-    assembly::{AssemblyBackend, AssemblyBlock},
-    core::{
-        ExecutableChunkAssemblyMutations, ExecutableChunkMutationPlan, RawMutationResult,
-        SimpleRng, plan_executable_chunk_assembly_mutation,
-    },
+    ExecutableChunkAssemblyMutations, ExecutableChunkMutationPlan, RawMutationResult, SimpleRng,
     pe::PeInput,
+    plan_executable_chunk_assembly_mutation,
 };
 
 fn instruction_count(block: &AssemblyBlock) -> usize {

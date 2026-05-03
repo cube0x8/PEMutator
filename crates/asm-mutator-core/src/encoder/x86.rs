@@ -117,6 +117,30 @@ fn lower_insn(insn: &X86Insn, ip: u64) -> Result<Instruction, Error> {
                         "x86 call rel8 is not a supported encoding",
                     ));
                 }
+                (X86BranchKind::Jnz, X86BranchWidth::Rel8) => (Code::Jne_rel8_32, 2_u64),
+                (X86BranchKind::Jnz, X86BranchWidth::Rel32) => (Code::Jne_rel32_32, 6_u64),
+                (X86BranchKind::Jz, X86BranchWidth::Rel8) => (Code::Je_rel8_32, 2_u64),
+                (X86BranchKind::Jz, X86BranchWidth::Rel32) => (Code::Je_rel32_32, 6_u64),
+                (X86BranchKind::Jb, X86BranchWidth::Rel8) => (Code::Jb_rel8_32, 2_u64),
+                (X86BranchKind::Jb, X86BranchWidth::Rel32) => (Code::Jb_rel32_32, 6_u64),
+                (X86BranchKind::Jle, X86BranchWidth::Rel8) => (Code::Jle_rel8_32, 2_u64),
+                (X86BranchKind::Jle, X86BranchWidth::Rel32) => (Code::Jle_rel32_32, 6_u64),
+                (X86BranchKind::Jg, X86BranchWidth::Rel8) => (Code::Jg_rel8_32, 2_u64),
+                (X86BranchKind::Jg, X86BranchWidth::Rel32) => (Code::Jg_rel32_32, 6_u64),
+                (X86BranchKind::Jns, X86BranchWidth::Rel8) => (Code::Jns_rel8_32, 2_u64),
+                (X86BranchKind::Jns, X86BranchWidth::Rel32) => (Code::Jns_rel32_32, 6_u64),
+                (X86BranchKind::Ja, X86BranchWidth::Rel8) => (Code::Ja_rel8_32, 2_u64),
+                (X86BranchKind::Ja, X86BranchWidth::Rel32) => (Code::Ja_rel32_32, 6_u64),
+                (X86BranchKind::Js, X86BranchWidth::Rel8) => (Code::Js_rel8_32, 2_u64),
+                (X86BranchKind::Js, X86BranchWidth::Rel32) => (Code::Js_rel32_32, 6_u64),
+                (X86BranchKind::Jae, X86BranchWidth::Rel8) => (Code::Jae_rel8_32, 2_u64),
+                (X86BranchKind::Jae, X86BranchWidth::Rel32) => (Code::Jae_rel32_32, 6_u64),
+                (X86BranchKind::Jl, X86BranchWidth::Rel8) => (Code::Jl_rel8_32, 2_u64),
+                (X86BranchKind::Jl, X86BranchWidth::Rel32) => (Code::Jl_rel32_32, 6_u64),
+                (X86BranchKind::Jge, X86BranchWidth::Rel8) => (Code::Jge_rel8_32, 2_u64),
+                (X86BranchKind::Jge, X86BranchWidth::Rel32) => (Code::Jge_rel32_32, 6_u64),
+                (X86BranchKind::Jnp, X86BranchWidth::Rel8) => (Code::Jnp_rel8_32, 2_u64),
+                (X86BranchKind::Jnp, X86BranchWidth::Rel32) => (Code::Jnp_rel32_32, 6_u64),
             };
             let target = ip
                 .wrapping_add(instr_len)
